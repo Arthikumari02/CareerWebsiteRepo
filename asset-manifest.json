@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/career-website-repo/static/css/main.587c10af.css",
+    "main.js": "/career-website-repo/static/js/main.081726e3.js",
+    "static/js/453.6a986459.chunk.js": "/career-website-repo/static/js/453.6a986459.chunk.js",
+    "index.html": "/career-website-repo/index.html",
+    "main.587c10af.css.map": "/career-website-repo/static/css/main.587c10af.css.map",
+    "main.081726e3.js.map": "/career-website-repo/static/js/main.081726e3.js.map",
+    "453.6a986459.chunk.js.map": "/career-website-repo/static/js/453.6a986459.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.587c10af.css",
+    "static/js/main.081726e3.js"
+  ]
+}
