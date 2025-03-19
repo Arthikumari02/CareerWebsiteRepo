@@ -1,0 +1,39 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .sidebar {
+    flex-grow: 0;
+    width: 250px;
+    background-color: #282c34;
+    color: white;
+    padding: 20px;
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+  
+  .sidebar ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .sidebar li {
+    margin: 20px 0;
+  }
+  
+  .sidebar a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+  }
+  
+  .content {
+    flex-grow: 1;
+    background: linear-gradient(to bottom, #e3fdfd, #ffe6fa);
+  }

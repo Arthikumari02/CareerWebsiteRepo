@@ -11,12 +11,14 @@
   .nav-links {
     list-style: none;
     display: flex;
-    gap: 20px;
+    gap: 10px;
   }
   
-  .nav-links li a {
+  .nav-item-button {
+    background-color: transparent;
+    border-color: transparent;
     color: white;
-    text-decoration: none;
-    font-weight: bold;
+    font-size: 17px;
+    font-weight: 600;
   }
   

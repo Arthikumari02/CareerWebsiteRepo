@@ -1,0 +1,21 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import './styles/Navbar.css';
+
+const Navbar = () => {
+  const navigate = useNavigate();
+
+  return (
+    <div className="navbar">
+      <h1 onClick={() => navigate('/')}>Mental Health Hub</h1>
+      <div className="nav-links">
+        <button onClick={() => navigate('/')} className='nav-item-button'>Home</button>
+        <button onClick={() => navigate('/journal')} className='nav-item-button'>Journal</button>
+        <button onClick={() => navigate('/breathing')} className='nav-item-button'>Breathing Exercises</button>
+        <button onClick={() => navigate('/motivation')} className='nav-item-button'>Daily Motivation</button>
+      </div>
+    </div>
+  );
+};
+
+export default Navbar;

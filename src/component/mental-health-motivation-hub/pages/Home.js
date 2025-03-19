@@ -1,6 +1,6 @@
 import "./styles/Home.css";
 import React, { useState } from 'react';
-import Navbar from '../Navbar';
+import Navbar from './Navbar';
 
 const affirmations = [
   "You are capable of amazing things.",
@@ -33,7 +33,6 @@ function Home() {
   return (
     <div className="home">
       <Navbar />
-
       <div className="hero-section">
         <h1>Welcome to Your Mental Health Hub</h1>
         <p>Find peace, motivation, and space to reflect. 🌸</p>
