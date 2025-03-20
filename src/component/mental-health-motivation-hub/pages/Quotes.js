@@ -5,13 +5,17 @@ const Quotes = () => {
   const [quote, setQuote] = useState("Loading your quote...");
 
   const fetchQuote = () => {
-    fetch("https://api.quotable.io/random")
+    const lastFetchTime = localStorage.getItem("lastFetchTime") || 0;
+    const now = Date.now();
+
+    if (now - lastFetchTime < 5000) {
+      console.warn("Too many requests! Try again later.");
+      return;
+    }
+
+    fetch("https://api.adviceslip.com/advice")
       .then((response) => response.json())
-      .then((data) => setQuote(data.content))
-      .catch((error) => {
-        console.error("Fetch error:", error);
-        setQuote("Believe you can, and you're halfway there. - Theodore Roosevelt");
-      });
+      .then((data) => setQuote(data.slip.advice));
   };
 
   useEffect(() => {
@@ -21,9 +25,11 @@ const Quotes = () => {
   return (
     <div className="quotes-page">
       <div className="quote-card">
-        <h2 className="quote-heading">🌟 Your Daily Dose of Inspiration 🌟</h2>
-        <p>{quote}</p>
-        <button className="new-quote-button" onClick={fetchQuote}>New Quote</button>
+        <h2 className="quote-heading">🌟 Words of Wisdom 🌟</h2>
+        <p className="fade-in">{quote}</p> {/* No need for key */}
+        <button className="new-quote-button" onClick={fetchQuote}>
+          New
+        </button>
       </div>
     </div>
   );

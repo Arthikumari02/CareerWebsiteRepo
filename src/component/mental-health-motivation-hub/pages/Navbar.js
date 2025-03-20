@@ -16,7 +16,7 @@ const Navbar = () => {
           Home
         </button>
         <button onClick={() => navigate("/quotes")} className="nav-item-button">
-          Quotes
+          Life Tips
         </button>
         <button
           onClick={() => navigate("/journal")}
