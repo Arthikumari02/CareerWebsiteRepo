@@ -9,7 +9,7 @@ const Navbar = () => {
     <div className="navbar">
       <h1 onClick={() => navigate('/')}>Mental Health Hub</h1>
       <div className="nav-links">
-        <button onClick={() => navigate('/')} className='nav-item-button'>Home</button>
+        <button onClick={() => navigate('/quotes')} className='nav-item-button'>Quotes</button>
         <button onClick={() => navigate('/journal')} className='nav-item-button'>Journal</button>
         <button onClick={() => navigate('/breathing')} className='nav-item-button'>Breathing Exercises</button>
         <button onClick={() => navigate('/motivation')} className='nav-item-button'>Daily Motivation</button>

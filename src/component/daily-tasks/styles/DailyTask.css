@@ -11,16 +11,22 @@
   .sidebar {
     flex-grow: 0;
     width: 250px;
-    background-color: #282c34;
+    background-color: #163266;
     color: white;
-    padding: 20px;
     min-height: 100vh;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: top;
+    align-items: center;
   }
   
   .sidebar ul {
     list-style-type: none;
     padding: 0;
+    padding: 20px;
+    min-height: 80vh;
+    flex-grow: 1;
   }
   
   .sidebar li {
@@ -37,3 +43,44 @@
     flex-grow: 1;
     background: linear-gradient(to bottom, #e3fdfd, #ffe6fa);
   }
+
+  hr {
+    margin: 20px 0;
+    border: 0;
+    border-top: 1px solid #ccc;
+    align-self: flex-start;
+  }
+  
+  .new-task-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    width: 80%;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    margin: 20px;
+    flex-grow: 0;
+  }
+  
+  .new-task-btn:hover {
+    background-color: #0056b3;
+  }
+  .date-text-style{
+    font-size: 14px;
+    width: 100%;
+    font-weight: 600px;
+    color: white;
+    margin: 10px;
+}
+
+.daily-tasks-buttonStyle{
+    width: 90%;
+    border:solid, 1px, grey;
+    background-color: transparent;
+}
+
+.daily-tasks-buttonStyle:hover{
+  background-color: rgb(75, 80, 88);
+}

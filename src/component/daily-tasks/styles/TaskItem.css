@@ -1,0 +1,37 @@
+.task-item-container{
+    height: 40px;
+    width: 30%;
+    border: solid 1px black;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    background-color: white;
+}
+.task-style{
+    font-size: 14px;
+    width: 30%;
+    font-weight: 600px;
+    color: black;
+    margin: 10px;
+}
+.timer-style{
+    font-size: 14px;
+    width: 20%;
+    font-weight: 400px;
+    color: black;
+    margin: 10px;
+}
+.delete-icon{
+    height: 20px;
+    height: 20px;
+    background-color: transparent;
+    border-color: transparent;
+}
+.edit-icon{
+    height: 20px;
+    height: 20px;
+    background-color: transparent;
+    border-color: transparent;
+    justify-self: end;
+}
