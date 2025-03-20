@@ -11,11 +11,13 @@ const DailyTasksButton = (props)=>{
     );
 };
 
-const DailyTask = () => {
 
+const DailyTask = (props) => {
+  const {sidebarTitle,onClikcOfAddTodayTasks,AddTodayTaskButtonText} = props
+  //const {dateText,listOfTasks,onClickOfChecklist,} = listOfDailyTasks;
     const tasks = [
-        { id: 1, task: "Complete React Project", starttime: "10:00 AM", endtime: "12:00 PM" },
-        { id: 2, task: "Study JavaScript", starttime: "1:00 PM", endtime: "2:30 PM" },
+        { id: 1, taskName: "Complete React Project", startTime: "10:00 AM", endTime: "12:00 PM",istTodaysDate:true, isTaskDone:true},
+        { id: 2, taskName: "Study JavaScript", startTime: "1:00 PM", endTime: "2:30 PM" ,istTodaysDate:false, isTaskDone:false},
       ];
 
       const handleDelete = (id) => {
@@ -25,26 +27,73 @@ const DailyTask = () => {
       const handleEdit = (id) => {
         console.log(`Edit task with id: ${id}`);
       };
-
   return (
     <div className="container">
       <div className="sidebar">
-      <DailyTasksButton dateText = "19-12-2004"/>
-        <hr />
-        <button className="new-task-btn">Add New Task</button>
+        <h1 className="sidebar-heading">{sidebarTitle}Add task</h1>
+        <div className="list-of-daily-tasks-container">
+          <ul className="list-of-daily-tasks">
+            <DailyTasksButton dateText = "19-12-2004"/>
+            <DailyTasksButton dateText = "19-12-2004"/>
+            <DailyTasksButton dateText = "19-12-2004"/>
+            <DailyTasksButton dateText = "19-12-2004"/>
+          </ul>
+        </div>
+        <button className="new-task-btn" onClick={onClikcOfAddTodayTasks}>{AddTodayTaskButtonText}Add Task</button>
       </div>
       <main className="content">
-        <div className="cards-container">
-            {tasks.map((task) => (
-                <TaskItem
-                    key={task.id}
-                    task={task.task}
-                    starttime={task.starttime}
-                    endtime={task.endtime}
-                    onClickOfDelete={() => handleDelete(task.id)}
-                    onClickOfEdit={() => handleEdit(task.id)}
+        <div className="input-fields-and-addbutton-container">
+          <div className="task-adding-container">
+            <div className="input-field-container">
+              <label className="input-label-style" htmlFor="TaskName">Task Name</label>
+              <input className="input-field-style" type="text" id="TaskName" placeholder="Task Name" />
+              <p className="error-message">Fill The Task Name</p>
+            </div>
+            <div className="input-field-container">
+              <label className="input-label-style" htmlFor="StartTime">StartTime</label>
+              <input
+                id="StartTime"
+                className="input-time-style"
+                type="time"
+              />
+            </div>
+
+            <div className="input-field-container">
+              <label className="input-label-style" htmlFor="StartTime">End Time</label>
+              <input
+                id="StartTime"
+                className="input-time-style"
+                type="time"
+              />
+            </div>
+          </div>
+          <button className="add-new-task-button-style">Add</button>
+        </div>
+        <div className="created-tasks-and-remaining-tasks-container">
+          <h2 className="tasks-text">Tasks</h2>
+          <div className="titles-container">
+            <p className="title-text">Task Name</p>
+            <p className="title-text starttime-title-text">Start Time</p>
+            <p className = "title-text endtime-title-text">End Time</p>
+          </div>
+            <ul className="list-of-created-tasks">
+              {tasks.map((task) => (
+                    <TaskItem
+                        key={task.id}
+                        taskName={task.taskName}
+                        startTime={task.startTime}
+                        endTime={task.endTime}
+                        isTaskDone={task.isTaskDone}
+                        istTodaysDate={task.istTodaysDate}
+                        onClickOfDelete={() => handleDelete(task.id)}
+                        onClickOfEdit={() => handleEdit(task.id)}
                 />
                 ))}
+            </ul>
+            <div className="tasksleftbutton-and-checklistbutton">
+              <button className="tasks-left-button">Tasks Left</button>
+              <button className="checklist-button">Create Checklist</button>
+            </div>
         </div>
       </main>
     </div>
