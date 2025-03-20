@@ -1,6 +1,5 @@
 import "./styles/Home.css";
-import React, { useState } from 'react';
-import Navbar from './Navbar';
+import React, { useState } from "react";
 
 const affirmations = [
   "You are capable of amazing things.",
@@ -24,7 +23,9 @@ function AffirmationGenerator() {
   return (
     <div>
       <p className="affirmation">"{affirmation}"</p>
-      <button className="cta-button" onClick={getRandomAffirmation}>New Affirmation</button>
+      <button className="cta-button" onClick={getRandomAffirmation}>
+        New Affirmation
+      </button>
     </div>
   );
 }
@@ -32,7 +33,6 @@ function AffirmationGenerator() {
 function Home() {
   return (
     <div className="home">
-      <Navbar />
       <div className="hero-section">
         <h1>Welcome to Your Mental Health Hub</h1>
         <p>Find peace, motivation, and space to reflect. 🌸</p>

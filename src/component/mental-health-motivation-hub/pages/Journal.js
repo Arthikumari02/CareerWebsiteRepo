@@ -37,7 +37,7 @@ const Journal = () => {
 
   return (
     <div className="journal-container">
-      <h2 className="journal-heading">📝 Your Personal Journal</h2>
+      <h1 className="journal-heading">📝 Your Personal Journal</h1>
 
       {/* Journal Input */}
       <textarea
@@ -59,7 +59,7 @@ const Journal = () => {
 
       {/* Display Previous Entries in Grid */}
       <div className="journal-entries">
-        <h3>📖 Previous Entries</h3>
+        <h1>📖 Previous Entries</h1>
         {entries.length === 0 ? (
           <p>No previous entries yet. Start writing!</p>
         ) : (
