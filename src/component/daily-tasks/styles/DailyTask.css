@@ -3,40 +3,25 @@
     flex-direction: row;
     justify-content: left;
     height: 100vh;
-    width: 100vw;
+    width: 100%;
     margin: 0;
     padding: 0;
+    background-size: cover;
+
   }
   
   .sidebar {
     flex-grow: 0;
-    width: 250px;
+    width: 15%;
     background-color: #163266;
     color: white;
-    min-height: 100vh;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    justify-content: top;
+    justify-content: space-between;
     align-items: center;
-  }
-  
-  .sidebar ul {
-    list-style-type: none;
-    padding: 0;
-    padding: 20px;
-    min-height: 80vh;
-    flex-grow: 1;
-  }
-  
-  .sidebar li {
-    margin: 20px 0;
-  }
-  
-  .sidebar a {
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
+    border: solid 1px black;
+    position: relative;
   }
   
   .content {
@@ -44,12 +29,7 @@
     background: linear-gradient(to bottom, #e3fdfd, #ffe6fa);
   }
 
-  hr {
-    margin: 20px 0;
-    border: 0;
-    border-top: 1px solid #ccc;
-    align-self: flex-start;
-  }
+  
   
   .new-task-btn {
     background-color: #007bff;
@@ -61,7 +41,7 @@
     border-radius: 5px;
     font-size: 16px;
     margin: 20px;
-    flex-grow: 0;
+    justify-self: end;
   }
   
   .new-task-btn:hover {
@@ -72,15 +52,144 @@
     width: 100%;
     font-weight: 600px;
     color: white;
-    margin: 10px;
+    text-align: center;
 }
 
 .daily-tasks-buttonStyle{
-    width: 90%;
+    width: 100%;
     border:solid, 1px, grey;
     background-color: transparent;
+    text-align: center;
+    margin-bottom: 10px;
 }
 
 .daily-tasks-buttonStyle:hover{
   background-color: rgb(75, 80, 88);
+}
+.list-of-daily-tasks-container{
+  width: 80%;
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1; 
+  margin-bottom: 10px;
+}
+.list-of-daily-tasks{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-left: 0px;
+  border: solid 1px black;
+}
+.input-label-style{
+  display: block;
+  margin-bottom: 8px;
+  font-weight:bold ;
+}
+
+.task-adding-container{
+  margin-top: 30px;
+  margin-left: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: start ;
+  align-items: center;
+}
+
+.input-field-style{
+  width: 150px;
+  height: 24px;
+}
+
+.input-field-container{
+  margin-right: 20px;
+}
+
+.input-time-style{
+  height: 25px;
+}
+
+.add-new-task-button-style{
+  height: 30px;
+  width: 60px;
+  background-color: #1f64ad;
+  border-radius: 2px;
+  border: none;
+  color: white;
+  margin-top: 30px;
+  margin-left: 30px;
+}
+
+.input-fields-and-addbutton-container{
+  width: 60%;
+  border: solid 1px black;
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+  margin-left: 30px;
+  justify-content: space-around;
+}
+
+.created-tasks-and-remaining-tasks-container{
+  width: 60%;
+  margin-top: 30px;
+  margin-left: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+  border: solid 1px  black;
+}
+
+.list-of-created-tasks{
+  width: 70%;
+  padding:0px;
+  margin-top: 0px;
+  margin-left: 30px;
+  border:solid 1px black;
+}
+.tasks-text{
+  margin-left: 30px;
+}
+.titles-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-left: 30px;
+}
+.title-text{
+  font-weight: bold;
+  margin-right: 180px;
+}
+.endtime-title-text{
+  margin-right: 100px;
+}
+.starttime-title-text{
+  margin-right: 75px;
+}
+.tasksleftbutton-and-checklistbutton{
+  width: 70%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+} 
+.tasks-left-button{
+  width: 100px;
+  height: 30px;
+  background-color:skyblue;
+  color:black;
+  border: none;
+  border-radius: 4px;
+}
+.checklist-button{
+  width: 150px;
+  height: 30px;
+  background-color:aqua;
+  color:white;
+  border: none;
+  border-radius: 4px;
 }
