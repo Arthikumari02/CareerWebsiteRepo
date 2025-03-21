@@ -6,6 +6,9 @@ import {
   useLocation,
 } from "react-router-dom";
 
+import { AuthProvider } from "./component/SignInAndOut/AuthContext";
+import PrivateRoute from "./component/SignInAndOut/PrivateRoute";
+
 import LifeCraftHome from "./component/LifeCraftHome";
 import LifeCraftHomeNavbar from "./component/LifeCraftHomeNavbar";
 import MentalHealthNavbar from "./component/mental-health-motivation-hub/pages/Navbar";
@@ -13,19 +16,21 @@ import MentalHealthMotivationalHub from "./component/mental-health-motivation-hu
 import DailyTask from "./component/daily-tasks/DailyTask";
 import Quotes from "./component/mental-health-motivation-hub/pages/Quotes";
 import Journal from "./component/mental-health-motivation-hub/pages/Journal";
+import SignUp from "./component/SignInAndOut/SignUp";
+import SignIn from "./component/SignInAndOut/SignIn";
 
 function App() {
   return (
-    <Router>
-      <MainApp />
-    </Router>
+    <AuthProvider>
+      <Router>
+        <MainApp />
+      </Router>
+    </AuthProvider>
   );
 }
 
 function MainApp() {
   const location = useLocation();
-
-  // Show Mental Health Navbar only on these pages
   const isMentalHealthPage =
     location.pathname === "/mental-health" ||
     location.pathname === "/quotes" ||
@@ -36,12 +41,14 @@ function MainApp() {
       {isMentalHealthPage ? <MentalHealthNavbar /> : <LifeCraftHomeNavbar />}
       <div className="content">
         <Routes>
-          <Route path="/career-website-repo" element={<LifeCraftHome />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/career-website-repo" element={<LifeCraftHome />}/>
           <Route
             path="/mental-health"
-            element={<MentalHealthMotivationalHub />}
+            element={<PrivateRoute > <MentalHealthMotivationalHub /> </PrivateRoute >}
           />
-          <Route path="/todo" element={<DailyTask />} />
+          <Route path="/todo" element={<PrivateRoute > <DailyTask /> </PrivateRoute>} />
           <Route path="/quotes" element={<Quotes />} />
           <Route path="/journal" element={<Journal />} />
         </Routes>

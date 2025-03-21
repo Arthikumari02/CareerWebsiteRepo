@@ -15,7 +15,6 @@ const CareerWebsiteHome = () => {
   ];
 
   return (
-    <div>
       <div className="main-container">
         <div className='card-container'>
         {features.map((feature, index) => (
@@ -24,8 +23,19 @@ const CareerWebsiteHome = () => {
           </div>
         ))}
         </div>
+        <div className="after-cards-section">
+          {/* Who We Are Section */}
+          <div className="who-we-are">
+            <div className="who-we-are-text">
+              <h1>Who We Are</h1>
+              <p style={{fontSize:"30px"}}>
+                Life Craft is designed to help you build productive habits, track goals,
+                and stay motivated.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
   );
 };
 
