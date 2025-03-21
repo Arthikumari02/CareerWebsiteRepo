@@ -21,6 +21,11 @@ const SignIn = () => {
       return;
     }
 
+    // if (user.password !== password) {
+    //   setError('Incorrect password. Please try again.');
+    //   return;
+    // }
+
     login();
     localStorage.setItem('user', JSON.stringify(user));
     alert('Sign-in successful!');
