@@ -16,6 +16,7 @@ import MentalHealthMotivationalHub from "./component/mental-health-motivation-hu
 import DailyTask from "./component/daily-tasks/DailyTask";
 import Quotes from "./component/mental-health-motivation-hub/pages/Quotes";
 import Journal from "./component/mental-health-motivation-hub/pages/Journal";
+import GratitudeJournal from "./component/mental-health-motivation-hub/pages/GratitudeChallenge";
 import SignUp from "./component/SignInAndOut/SignUp";
 import SignIn from "./component/SignInAndOut/SignIn";
 
@@ -34,7 +35,8 @@ function MainApp() {
   const isMentalHealthPage =
     location.pathname === "/mental-health" ||
     location.pathname === "/quotes" ||
-    location.pathname === "/journal";
+    location.pathname === "/journal"||
+    location.pathname === "/gratitude";
 
   return (
     <div className="App">
@@ -51,6 +53,7 @@ function MainApp() {
           <Route path="/todo" element={<PrivateRoute > <DailyTask /> </PrivateRoute>} />
           <Route path="/quotes" element={<Quotes />} />
           <Route path="/journal" element={<Journal />} />
+          <Route path="/gratitude" element={<GratitudeJournal />} />
         </Routes>
       </div>
     </div>

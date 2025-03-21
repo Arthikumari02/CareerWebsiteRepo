@@ -25,10 +25,10 @@ const Navbar = () => {
           Journal
         </button>
         <button
-          onClick={() => navigate("/motivation")}
+          onClick={() => navigate("/gratitude")}
           className="nav-item-button"
         >
-          Daily Motivation
+          Gratitude
         </button>
       </div>
     </div>
