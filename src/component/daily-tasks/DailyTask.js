@@ -28,16 +28,21 @@ class DailyTask extends React.Component {
     }
 
     this.state = {
-      listOfDailyTasks: {
-        dateText: props.listOfDailyTasks?.dateText || "",
-        listOfTasks: props.listOfDailyTasks?.listOfTasks || savedTasks,
-      },
+      listOfDailyTasks: [
+        {
+          id: "",
+          dateText: props.listOfDailyTasks?.dateText || "",
+          listOfTasks: props.listOfDailyTasks?.listOfTasks || savedTasks,
+        },
+      ],
       TaskItem: {
         taskName: "",
         startTime: "",
         endTime: "",
         isTaskDone: false,
       },
+      showOnlyIncompleteTasks: false, // Add this flag to track filter state
+      allTasks: props.listOfDailyTasks?.listOfTasks || savedTasks,
     };
   }
 
@@ -49,24 +54,55 @@ class DailyTask extends React.Component {
   updateLocalStorage = () => {
     localStorage.setItem(
       "listOfTasks",
-      JSON.stringify(this.state.listOfDailyTasks.listOfTasks)
+      JSON.stringify(this.state.allTasks) // Store all tasks, not filtered ones
     );
     console.log(localStorage.getItem("listOfTasks"));
   };
 
+  toggleTasksFilter = () => {
+    const { showOnlyIncompleteTasks, allTasks } = this.state;
+
+    if (showOnlyIncompleteTasks) {
+      // Currently showing only incomplete tasks, switch to showing all
+      this.setState({
+        showOnlyIncompleteTasks: false,
+        listOfDailyTasks: {
+          ...this.state.listOfDailyTasks,
+          listOfTasks: [...this.state.allTasks],
+        },
+      });
+    } else {
+      // Currently showing all tasks, switch to showing only incomplete
+      const incompleteTasks = this.state.allTasks.filter(
+        (task) => !task.isTaskDone
+      );
+      this.setState({
+        showOnlyIncompleteTasks: true,
+        listOfDailyTasks: {
+          ...this.state.listOfDailyTasks,
+          listOfTasks: incompleteTasks,
+        },
+      });
+    }
+  };
+
   handleDelete = (id) => {
-    console.log(`Delete task with id: ${id}`);
-    this.setState(
-      (prevState) => ({
+    this.setState((prevState) => {
+      const updatedAllTasks = prevState.allTasks.filter(
+        (task) => task.id !== id
+      );
+      return {
+        allTasks: updatedAllTasks,
         listOfDailyTasks: {
           ...prevState.listOfDailyTasks,
-          listOfTasks: prevState.listOfDailyTasks.listOfTasks.filter(
-            (task) => task.id !== id
-          ),
+          listOfTasks: prevState.showOnlyIncompleteTasks
+            ? prevState.listOfDailyTasks.listOfTasks.filter(
+                (task) => task.id !== id
+              )
+            : updatedAllTasks,
         },
-      }),
-      this.updateLocalStorage // Update localStorage after state change
-    );
+      };
+    }, this.updateLocalStorage);
   };
 
   // Fix the handleEdit function
@@ -88,7 +124,7 @@ class DailyTask extends React.Component {
   onClickOfAddButton = (taskData) => {
     if (taskData.id) {
       // Editing an existing task
-      const updatedTasks = this.state.listOfDailyTasks.listOfTasks.map((task) =>
+      const updatedTasks = this.state.allTasks.map((task) =>
         task.id === taskData.id
           ? {
               ...task,
@@ -100,13 +136,9 @@ class DailyTask extends React.Component {
           : task
       );
 
-      this.setState(
-        (prevState) => ({
-          listOfDailyTasks: {
-            ...prevState.listOfDailyTasks,
-            listOfTasks: updatedTasks,
-          },
-          // Clear the TaskItem after update
+      this.setState((prevState) => {
+        const newState = {
+          allTasks: updatedTasks,
           TaskItem: {
             taskName: "",
             startTime: "",
@@ -114,9 +146,24 @@ class DailyTask extends React.Component {
             id: "",
             isTaskDone: false,
           },
-        }),
-        this.updateLocalStorage // Update localStorage after state change
-      );
+        };
+
+        // If we're showing all tasks, update listOfTasks too
+        if (!prevState.showOnlyIncompleteTasks) {
+          newState.listOfDailyTasks = {
+            ...prevState.listOfDailyTasks,
+            listOfTasks: updatedTasks,
+          };
+        } else {
+          // Otherwise, only show incomplete tasks
+          newState.listOfDailyTasks = {
+            ...prevState.listOfDailyTasks,
+            listOfTasks: updatedTasks.filter((task) => !task.isTaskDone),
+          };
+        }
+
+        return newState;
+      }, this.updateLocalStorage);
     } else {
       // Creating a new task
       const newTask = {
@@ -127,40 +174,54 @@ class DailyTask extends React.Component {
         isTodaysDate: true,
         isTaskDone: false,
       };
-
-      this.setState(
-        (prevState) => ({
+      this.setState((prevState) => {
+        const updatedAllTasks = [...prevState.allTasks, newTask];
+        return {
+          allTasks: updatedAllTasks,
           listOfDailyTasks: {
             ...prevState.listOfDailyTasks,
-            listOfTasks: [...prevState.listOfDailyTasks.listOfTasks, newTask],
+            listOfTasks: prevState.showOnlyIncompleteTasks
+              ? [...prevState.listOfDailyTasks.listOfTasks, newTask]
+              : updatedAllTasks,
           },
-        }),
-        this.updateLocalStorage // Update localStorage after state change
-      );
+        };
+      }, this.updateLocalStorage);
     }
   };
-  onTaskDone = (checked, id) => {
-    const stringifiedlistOfTasks = localStorage.getItem("listOfTasks");
-    let listOfTasksToUpdate = JSON.parse(stringifiedlistOfTasks);
-    const updatedList = listOfTasksToUpdate.map((item) =>
-      item.id === id ? { ...item, isTaskDone: checked } : item
-    );
-    console.log("Task Status:");
-    console.log(checked);
-    console.log(id);
 
-    this.setState(
-      (prevState) => ({
+  onTaskDone = (checked, id) => {
+    this.setState((prevState) => {
+      const updatedAllTasks = prevState.allTasks.map((item) =>
+        item.id === id ? { ...item, isTaskDone: checked } : item
+      );
+
+      return {
+        allTasks: updatedAllTasks,
         listOfDailyTasks: {
           ...prevState.listOfDailyTasks,
-          listOfTasks: updatedList,
+          listOfTasks: prevState.showOnlyIncompleteTasks
+            ? updatedAllTasks.filter((task) => !task.isTaskDone)
+            : updatedAllTasks,
         },
-      }),
-      this.updateLocalStorage // Update localStorage after state change
-    );
+      };
+    }, this.updateLocalStorage);
   };
+
+  OnClickOfAddTodayTasks = () => {
+    let todayTaskDetails = {
+      id: uuidv4(),
+      dateText: new Date().toISOString().split("T")[0],
+      listOfTaks: [],
+    };
+
+    const { listOfDailyTasks } = this.state;
+    let updatedlist = listOfDailyTasks;
+    updatedlist = { ...todayTaskDetails };
+    this.setState({ listOfDailyTasks: updatedlist });
+  };
+
   render() {
-    const { sidebarTitle, onClikcOfAddTodayTasks, AddTodayTaskButtonText } =
+    const { sidebarTitle, onClickOfAddTodayTasks, AddTodayTaskButtonText } =
       this.props;
 
     return (
@@ -169,15 +230,18 @@ class DailyTask extends React.Component {
           <h1 className="sidebar-heading">{sidebarTitle || "Add task"}</h1>
           <div className="list-of-daily-tasks-container">
             <ul className="list-of-daily-tasks">
-              <DailyTasksButton dateText="19-12-2004" />
-              <DailyTasksButton dateText="19-12-2004" />
-              <DailyTasksButton dateText="19-12-2004" />
-              <DailyTasksButton dateText="19-12-2004" />
+              {this.state.listOfDailyTasks.map((item) => (
+                <DailyTask
+                  key={item.id}
+                  id={item.id}
+                  dateText={item.dateText}
+                />
+              ))}
             </ul>
           </div>
           <button
             className="new-task-btn"
-            onClick={onClikcOfAddTodayTasks || (() => {})}
+            onClick={onClickOfAddTodayTasks || (() => {})}
           >
             {AddTodayTaskButtonText || "Add Task"}
           </button>
@@ -212,12 +276,13 @@ class DailyTask extends React.Component {
               ))}
             </ul>
             <div className="tasksleftbutton-and-checklistbutton">
-              <button className="tasks-left-button">Tasks Left</button>
               <button
-                className="checklist-button"
-                onClick={this.state.listOfDailyTasks.onClickOfChecklist}
+                className="tasks-left-button"
+                onClick={this.toggleTasksFilter}
               >
-                Create Checklist
+                {this.state.showOnlyIncompleteTasks
+                  ? "Show All Tasks"
+                  : "Tasks Left"}
               </button>
             </div>
           </div>
