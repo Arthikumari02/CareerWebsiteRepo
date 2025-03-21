@@ -1,61 +1,101 @@
-/* Quotes Page Styles */
+/* 🌅 Background - Smooth & Elegant */
 .quotes-page {
-    text-align: center;
-    padding: 2px;
-    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(to bottom right, #fee2f8, #c3efff);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
 }
 
+/* ✨ Soft Floating Glow */
+.quotes-page::before {
+  content: "";
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  top: 8%;
+  left: 15%;
+  animation: float 6s infinite ease-in-out;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(20px);
+  }
+}
+
+/* 🌟 Heading - More Stylish */
 .quotes-heading {
-    font-size: 2.5rem;
-    color: #6f37ca;
-    margin-bottom: 1.5rem;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  font-size: 2.8rem;
+  color: #6f37ca;
+  font-weight: bold;
+  margin-bottom: 1.8rem;
+  text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: "Poppins", sans-serif;
 }
 
+/* 💎 Glassmorphism Quote Card */
 .quote-card {
-    background: #ffffff;
-    padding: 40px;
-    margin: 0,20,0,0;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
-    text-align: center;
-    animation: fadeIn 0.5s ease;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  max-width: 800px;
+  text-align: center;
+  animation: fadeIn 1s ease-in-out;
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
+/* ✨ Fade-in Effect */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 📝 Quote Text - More Readable */
 .quote-card p {
-    font-size: 1.5rem;
-    color: #333;
-    font-style: italic;
-    margin-bottom: 1rem;
+  font-size: 1.7rem;
+  color: #333;
+  font-style: italic;
+  font-weight: 500;
+  margin-bottom: 1.2rem;
+  font-family: "Playfair Display", serif;
 }
 
+/* 🔘 Stylish Button */
 .new-quote-button {
-    padding: 0.75rem 1.5rem;
-    background: #6f37ca;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s;
+  padding: 12px 25px;
+  background: linear-gradient(to right, #ff8a00, #e52e71);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  font-family: "Poppins", sans-serif;
 }
 
 .new-quote-button:hover {
-    background: #4b2696;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  transform: scale(1.1);
+  background: linear-gradient(to right, #e52e71, #ff8a00);
 }
