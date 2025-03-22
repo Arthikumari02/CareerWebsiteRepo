@@ -35,11 +35,9 @@ function MainApp() {
   const isMentalHealthPage =
     location.pathname === "/mental-health" ||
     location.pathname === "/quotes" ||
-    location.pathname === "/journal"||
-    location.pathname === "/gratitude" || 
-    location.pathname === "/personalized-dashboard"
-    ;
-
+    location.pathname === "/journal" ||
+    location.pathname === "/gratitude" ||
+    location.pathname === "/personalized-dashboard";
   return (
     <div className="App">
       {isMentalHealthPage ? <MentalHealthNavbar /> : <LifeCraftHomeNavbar />}
@@ -47,15 +45,31 @@ function MainApp() {
         <Routes>
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
-          <Route path="/career-website-repo" element={<LifeCraftHome />}/>
+          <Route path="/career-website-repo" element={<LifeCraftHome />} />
           <Route
             path="/mental-health"
-            element={<PrivateRoute > <MentalHealthMotivationalHub /> </PrivateRoute >}
+            element={
+              <PrivateRoute>
+                {" "}
+                <MentalHealthMotivationalHub />{" "}
+              </PrivateRoute>
+            }
           />
-          <Route path="/todo" element={<PrivateRoute > <DailyTask /> </PrivateRoute>} />
+          <Route
+            path="/todo"
+            element={
+              <PrivateRoute>
+                {" "}
+                <DailyTask />{" "}
+              </PrivateRoute>
+            }
+          />
           <Route path="/quotes" element={<Quotes />} />
           <Route path="/journal" element={<Journal />} />
-          <Route path="/personalized-dashboard" element={<PersonalizedDashboard />} />
+          <Route
+            path="/personalized-dashboard"
+            element={<PersonalizedDashboard />}
+          />
         </Routes>
       </div>
     </div>

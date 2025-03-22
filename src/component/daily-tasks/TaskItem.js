@@ -2,7 +2,6 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import "./styles/TaskItem.css";
-import { v4 as uuidv4 } from "uuid";
 
 const TaskItem = (props) => {
   const {
