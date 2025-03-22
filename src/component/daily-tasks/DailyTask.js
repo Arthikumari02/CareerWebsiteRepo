@@ -260,26 +260,14 @@ class DailyTask extends React.Component {
           <div className="list-of-daily-tasks-container">
             <ul className="list-of-daily-tasks">
               {this.state.listOfDailyTasks.map((daily) => (
-                <li
+                <DailyTasksButton
                   key={daily.id}
-                  onClick={() => this.setActiveDaily(daily.id)}
-                  className={
-                    daily.id === this.state.activeDailyTaskId
-                      ? "active-daily"
-                      : ""
-                  }
-                >
-                  <DailyTasksButton
-                    key={daily.id}
-                    id={daily.id}
-                    dateText={daily.dateText}
-                    onClickOfDate={() => this.setActiveDaily(daily.id)}
-                    onCllickOfDelete={() =>
-                      this.OnClickOfDeleteDayTask(daily.id)
-                    }
-                    tasks={daily.listOfTasks.length}
-                  />
-                </li>
+                  id={daily.id}
+                  dateText={daily.dateText}
+                  onClickOfDate={() => this.setActiveDaily(daily.id)}
+                  onCllickOfDelete={() => this.OnClickOfDeleteDayTask(daily.id)}
+                  tasks={daily.listOfTasks.length}
+                />
               ))}
             </ul>
           </div>
