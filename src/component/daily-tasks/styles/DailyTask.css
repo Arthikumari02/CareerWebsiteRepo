@@ -103,7 +103,7 @@
 
 .input-field-container {
   margin-right: 20px;
-  padding-bottom:30px;
+  padding-bottom: 30px;
 }
 
 .input-time-style {
@@ -183,7 +183,7 @@
   align-items: center;
 }
 .tasks-left-button {
-  width: 100px;
+  width: 150px;
   height: 30px;
   background-color: skyblue;
   color: black;
