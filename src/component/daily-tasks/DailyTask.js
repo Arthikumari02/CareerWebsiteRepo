@@ -4,7 +4,7 @@ import TaskItem from "./TaskItem";
 import { v4 as uuidv4 } from "uuid";
 
 const DailyTasksButton = (props) => {
-  const { id, dateText, onClickOfDate } = props;
+  const {dateText, onClickOfDate } = props;
   return (
     <button className="daily-tasks-buttonStyle" onClick={onClickOfDate}>
       <p className="date-text-style">{dateText}</p>
@@ -27,20 +27,20 @@ class DailyTask extends React.Component {
       console.error("Error loading tasks from localStorage:", error);
     }
 
+    // Fix the state structure - listOfDailyTasks is now an object, not an array
     this.state = {
-      listOfDailyTasks: [
-        {
-          id: "",
-          dateText: props.listOfDailyTasks?.dateText || "",
-          listOfTasks: props.listOfDailyTasks?.listOfTasks || savedTasks,
-        },
-      ],
+      listOfDailyTasks: {
+        id: uuidv4(),
+        dateText: props.dateText || new Date().toLocaleDateString(),
+        listOfTasks: savedTasks || [],
+      },
       TaskItem: {
         taskName: "",
         startTime: "",
         endTime: "",
         isTaskDone: false,
       },
+      showOnlyIncompleteTasks: false, // Add missing state for task filtering
     };
   }
 
@@ -50,11 +50,11 @@ class DailyTask extends React.Component {
   }
 
   updateLocalStorage = () => {
+    // Fix: Store listOfTasks instead of allTasks (which doesn't exist)
     localStorage.setItem(
       "listOfTasks",
       JSON.stringify(this.state.listOfDailyTasks.listOfTasks)
     );
-    console.log(localStorage.getItem("listOfTasks"));
   };
 
   handleDelete = (id) => {
@@ -72,7 +72,6 @@ class DailyTask extends React.Component {
     );
   };
 
-  // Fix the handleEdit function
   handleEdit = (needToUpdateTaskItem) => {
     console.log("Received task item:", needToUpdateTaskItem);
 
@@ -142,12 +141,13 @@ class DailyTask extends React.Component {
       );
     }
   };
+
   onTaskDone = (checked, id) => {
-    const stringifiedlistOfTasks = localStorage.getItem("listOfTasks");
-    let listOfTasksToUpdate = JSON.parse(stringifiedlistOfTasks);
-    const updatedList = listOfTasksToUpdate.map((item) =>
+    // Use the current state directly instead of re-reading from localStorage
+    const updatedList = this.state.listOfDailyTasks.listOfTasks.map((item) =>
       item.id === id ? { ...item, isTaskDone: checked } : item
     );
+    
     console.log("Task Status:");
     console.log(checked);
     console.log(id);
@@ -162,9 +162,21 @@ class DailyTask extends React.Component {
       this.updateLocalStorage // Update localStorage after state change
     );
   };
+
+  toggleTasksFilter = () => {
+    this.setState((prevState) => ({
+      showOnlyIncompleteTasks: !prevState.showOnlyIncompleteTasks,
+    }));
+  };
+
   render() {
     const { sidebarTitle, onClickOfAddTodayTasks, AddTodayTaskButtonText } =
       this.props;
+
+    // Filter tasks if necessary
+    const tasksToDisplay = this.state.showOnlyIncompleteTasks
+      ? this.state.listOfDailyTasks.listOfTasks.filter(task => !task.isTaskDone)
+      : this.state.listOfDailyTasks.listOfTasks;
 
     return (
       <div className="container">
@@ -172,13 +184,13 @@ class DailyTask extends React.Component {
           <h1 className="sidebar-heading">{sidebarTitle || "Add task"}</h1>
           <div className="list-of-daily-tasks-container">
             <ul className="list-of-daily-tasks">
-              {this.state.listOfDailyTasks.map((item) => (
-                <DailyTask
-                  key={item.id}
-                  id={item.id}
-                  dateText={item.dateText}
-                />
-              ))}
+              {/* Only render one button for now */}
+              <DailyTasksButton
+                key={this.state.listOfDailyTasks.id}
+                id={this.state.listOfDailyTasks.id}
+                dateText={this.state.listOfDailyTasks.dateText}
+                onClickOfDate={() => {}}
+              />
             </ul>
           </div>
           <button
@@ -202,7 +214,7 @@ class DailyTask extends React.Component {
               <p className="title-text endtime-title-text">End Time</p>
             </div>
             <ul className="list-of-created-tasks">
-              {this.state.listOfDailyTasks.listOfTasks.map((task) => (
+              {tasksToDisplay.map((task) => (
                 <TaskItem
                   key={task.id}
                   id={task.id}
@@ -218,7 +230,6 @@ class DailyTask extends React.Component {
               ))}
             </ul>
             <div className="tasksleftbutton-and-checklistbutton">
-              <button className="tasks-left-button">Tasks Left</button>
               <button
                 className="tasks-left-button"
                 onClick={this.toggleTasksFilter}
