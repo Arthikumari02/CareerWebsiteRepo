@@ -52,7 +52,7 @@ class DailyTask extends React.Component {
   updateLocalStorage = () => {
     localStorage.setItem(
       "listOfTasks",
-      JSON.stringify(this.state.listOfDailyTasks.listOfTasks)
+      JSON.stringify(this.state.allTasks) // Store all tasks, not filtered ones
     );
     console.log(localStorage.getItem("listOfTasks"));
   };
