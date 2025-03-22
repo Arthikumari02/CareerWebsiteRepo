@@ -14,7 +14,8 @@ const CareerWebsiteNavbar = () => {
     location.pathname === "/mental-health" ||
     location.pathname === "/quotes" ||
     location.pathname === "/journal" || 
-    location.pathname === "/gratitude"
+    location.pathname === "/gratitude" ||
+    location.pathname === "/personalized-dashboard"
     ;
 
   if (isMentalHealthPage) {

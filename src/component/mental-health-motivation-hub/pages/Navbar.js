@@ -9,6 +9,12 @@ const Navbar = () => {
     <div className="navbar">
       <h1 onClick={() => navigate("/")}>Mental Health Hub</h1>
       <div className="nav-links">
+      <button
+          onClick={() => navigate("/mental-health")}
+          className="nav-item-button"
+        >
+          Back
+        </button>
         <button
           onClick={() => navigate("/career-website-repo")}
           className="nav-item-button"
@@ -25,10 +31,10 @@ const Navbar = () => {
           Journal
         </button>
         <button
-          onClick={() => navigate("/gratitude")}
+          onClick={() => navigate("/personalized-dashboard")}
           className="nav-item-button"
         >
-          Gratitude
+          Dashboard
         </button>
       </div>
     </div>
