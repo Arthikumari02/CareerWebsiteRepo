@@ -2,13 +2,20 @@ import React from "react";
 import "./styles/DailyTask.css";
 import TaskItem from "./TaskItem";
 import { v4 as uuidv4 } from "uuid";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
 const DailyTasksButton = (props) => {
-  const {dateText, onClickOfDate } = props;
+  const { dateText, onClickOfDate, onCllickOfDelete } = props;
   return (
-    <button className="daily-tasks-buttonStyle" onClick={onClickOfDate}>
-      <p className="date-text-style">{dateText}</p>
-    </button>
+    <div className="daily-task-buttons-container">
+      <button className="daily-tasks-buttonStyle" onClick={onClickOfDate}>
+        <p className="date-text-style">{dateText}</p>
+      </button>
+      <button className="delete-icon" onClick={onCllickOfDelete}>
+        <FontAwesomeIcon icon={faTrash} />
+      </button>
+    </div>
   );
 };
 
@@ -16,31 +23,31 @@ class DailyTask extends React.Component {
   constructor(props) {
     super(props);
 
-    // Try to load tasks from localStorage first
-    let savedTasks = [];
+    // Try to load daily task lists from localStorage first
+    let savedDailyTasks = [];
     try {
-      const savedTasksString = localStorage.getItem("listOfTasks");
+      const savedTasksString = localStorage.getItem("listOfDailyTasks");
       if (savedTasksString) {
-        savedTasks = JSON.parse(savedTasksString);
+        savedDailyTasks = JSON.parse(savedTasksString);
       }
     } catch (error) {
       console.error("Error loading tasks from localStorage:", error);
     }
 
-    // Fix the state structure - listOfDailyTasks is now an object, not an array
+    // If no saved tasks or empty array, initialize with a default empty task list
+    const initialDailyTasks = savedDailyTasks.length > 0 ? savedDailyTasks : [];
+
     this.state = {
-      listOfDailyTasks: {
-        id: uuidv4(),
-        dateText: props.dateText || new Date().toLocaleDateString(),
-        listOfTasks: savedTasks || [],
-      },
+      listOfDailyTasks: initialDailyTasks,
+      activeDailyTaskId:
+        initialDailyTasks.length < 0 ? initialDailyTasks[0].id : "", // Track which daily task is currently active
       TaskItem: {
         taskName: "",
         startTime: "",
         endTime: "",
         isTaskDone: false,
       },
-      showOnlyIncompleteTasks: false, // Add missing state for task filtering
+      showOnlyIncompleteTasks: false, // Flag to track filter state
     };
   }
 
@@ -50,65 +57,97 @@ class DailyTask extends React.Component {
   }
 
   updateLocalStorage = () => {
-    // Fix: Store listOfTasks instead of allTasks (which doesn't exist)
     localStorage.setItem(
-      "listOfTasks",
-      JSON.stringify(this.state.listOfDailyTasks.listOfTasks)
+      "listOfDailyTasks",
+      JSON.stringify(this.state.listOfDailyTasks)
+    );
+    console.log(
+      "Updated localStorage:",
+      localStorage.getItem("listOfDailyTasks")
     );
   };
 
-  handleDelete = (id) => {
-    console.log(`Delete task with id: ${id}`);
-    this.setState(
-      (prevState) => ({
-        listOfDailyTasks: {
-          ...prevState.listOfDailyTasks,
-          listOfTasks: prevState.listOfDailyTasks.listOfTasks.filter(
-            (task) => task.id !== id
-          ),
-        },
-      }),
-      this.updateLocalStorage // Update localStorage after state change
-    );
+  // Get the currently active task list
+  getActiveTaskList = () => {
+    const activeDaily =
+      this.state.listOfDailyTasks.find(
+        (daily) => daily.id === this.state.activeDailyTaskId
+      ) || this.state.listOfDailyTasks[0];
+
+    return activeDaily;
   };
 
-  handleEdit = (needToUpdateTaskItem) => {
-    console.log("Received task item:", needToUpdateTaskItem);
+  // Get filtered tasks based on current filter setting
+  getFilteredTasks = () => {
+    const activeDaily = this.getActiveTaskList();
+    if (!activeDaily) return [];
 
-    // Update state correctly using the task object
-    this.setState(
-      {
-        TaskItem: needToUpdateTaskItem,
-      },
-      () => {
-        // This callback runs after the state is updated
-        console.log("State updated with task:", this.state.TaskItem);
-      }
-    );
+    if (this.state.showOnlyIncompleteTasks) {
+      return activeDaily.listOfTasks.filter((task) => !task.isTaskDone);
+    }
+    return activeDaily.listOfTasks;
+  };
+
+  toggleTasksFilter = () => {
+    this.setState((prevState) => ({
+      showOnlyIncompleteTasks: !prevState.showOnlyIncompleteTasks,
+    }));
+  };
+
+  handleDelete = (taskId) => {
+    this.setState((prevState) => {
+      // Find the active daily task
+      const updatedDailyTasks = prevState.listOfDailyTasks.map((daily) => {
+        if (daily.id === prevState.activeDailyTaskId) {
+          // Remove the task from this daily task list
+          return {
+            ...daily,
+            listOfTasks: daily.listOfTasks.filter((task) => task.id !== taskId),
+          };
+        }
+        return daily;
+      });
+
+      return {
+        listOfDailyTasks: updatedDailyTasks,
+      };
+    }, this.updateLocalStorage);
+  };
+
+  handleEdit = (taskToEdit) => {
+    console.log("Received task item for editing:", taskToEdit);
+    this.setState({
+      TaskItem: taskToEdit,
+    });
   };
 
   onClickOfAddButton = (taskData) => {
     if (taskData.id) {
       // Editing an existing task
-      const updatedTasks = this.state.listOfDailyTasks.listOfTasks.map((task) =>
-        task.id === taskData.id
-          ? {
-              ...task,
-              taskName: taskData.taskName,
-              startTime: taskData.startTime,
-              endTime: taskData.endTime,
-              isTaskDone: taskData.isTaskDone,
-            }
-          : task
-      );
+      this.setState((prevState) => {
+        const updatedDailyTasks = prevState.listOfDailyTasks.map((daily) => {
+          if (daily.id === prevState.activeDailyTaskId) {
+            // Update the specific task in this daily task list
+            return {
+              ...daily,
+              listOfTasks: daily.listOfTasks.map((task) =>
+                task.id === taskData.id
+                  ? {
+                      ...task,
+                      taskName: taskData.taskName,
+                      startTime: taskData.startTime,
+                      endTime: taskData.endTime,
+                      isTaskDone: taskData.isTaskDone,
+                    }
+                  : task
+              ),
+            };
+          }
+          return daily;
+        });
 
-      this.setState(
-        (prevState) => ({
-          listOfDailyTasks: {
-            ...prevState.listOfDailyTasks,
-            listOfTasks: updatedTasks,
-          },
-          // Clear the TaskItem after update
+        return {
+          listOfDailyTasks: updatedDailyTasks,
           TaskItem: {
             taskName: "",
             startTime: "",
@@ -116,9 +155,8 @@ class DailyTask extends React.Component {
             id: "",
             isTaskDone: false,
           },
-        }),
-        this.updateLocalStorage // Update localStorage after state change
-      );
+        };
+      }, this.updateLocalStorage);
     } else {
       // Creating a new task
       const newTask = {
@@ -130,53 +168,90 @@ class DailyTask extends React.Component {
         isTaskDone: false,
       };
 
-      this.setState(
-        (prevState) => ({
-          listOfDailyTasks: {
-            ...prevState.listOfDailyTasks,
-            listOfTasks: [...prevState.listOfDailyTasks.listOfTasks, newTask],
-          },
-        }),
-        this.updateLocalStorage // Update localStorage after state change
-      );
+      this.setState((prevState) => {
+        const updatedDailyTasks = prevState.listOfDailyTasks.map((daily) => {
+          if (daily.id === prevState.activeDailyTaskId) {
+            // Add the new task to this daily task list
+            return {
+              ...daily,
+              listOfTasks: [...daily.listOfTasks, newTask],
+            };
+          }
+          return daily;
+        });
+
+        return {
+          listOfDailyTasks: updatedDailyTasks,
+        };
+      }, this.updateLocalStorage);
     }
   };
 
-  onTaskDone = (checked, id) => {
-    // Use the current state directly instead of re-reading from localStorage
-    const updatedList = this.state.listOfDailyTasks.listOfTasks.map((item) =>
-      item.id === id ? { ...item, isTaskDone: checked } : item
-    );
-    
-    console.log("Task Status:");
-    console.log(checked);
-    console.log(id);
+  onTaskDone = (checked, taskId) => {
+    this.setState((prevState) => {
+      const updatedDailyTasks = prevState.listOfDailyTasks.map((daily) => {
+        if (daily.id === prevState.activeDailyTaskId) {
+          // Update the task status in this daily task list
+          return {
+            ...daily,
+            listOfTasks: daily.listOfTasks.map((task) =>
+              task.id === taskId ? { ...task, isTaskDone: checked } : task
+            ),
+          };
+        }
+        return daily;
+      });
+
+      return {
+        listOfDailyTasks: updatedDailyTasks,
+      };
+    }, this.updateLocalStorage);
+  };
+
+  OnClickOfAddTodayTasks = () => {
+    const newDailyTask = {
+      id: uuidv4(),
+      dateText: new Date().toISOString().split("T")[0],
+      listOfTasks: [],
+    };
 
     this.setState(
       (prevState) => ({
-        listOfDailyTasks: {
-          ...prevState.listOfDailyTasks,
-          listOfTasks: updatedList,
-        },
+        listOfDailyTasks: [...prevState.listOfDailyTasks, newDailyTask],
+        activeDailyTaskId: newDailyTask.id,
       }),
-      this.updateLocalStorage // Update localStorage after state change
+      this.updateLocalStorage
     );
   };
 
-  toggleTasksFilter = () => {
-    this.setState((prevState) => ({
-      showOnlyIncompleteTasks: !prevState.showOnlyIncompleteTasks,
-    }));
+  setActiveDaily = (dailyId) => {
+    this.setState({
+      activeDailyTaskId: dailyId,
+    });
+  };
+
+  OnClickOfDeleteDayTask = (id) => {
+    const { listOfDailyTasks } = this.state;
+    const updatedListOfDailyTask = listOfDailyTasks.filter(
+      (dayItem) => dayItem.id !== id
+    );
+    this.setState((prevState) => {
+      return {
+        listOfDailyTasks: updatedListOfDailyTask,
+      };
+    }, this.updateLocalStorage);
+    this.setState({ listOfDailyTasks: updatedListOfDailyTask });
   };
 
   render() {
-    const { sidebarTitle, onClickOfAddTodayTasks, AddTodayTaskButtonText } =
-      this.props;
-
-    // Filter tasks if necessary
-    const tasksToDisplay = this.state.showOnlyIncompleteTasks
-      ? this.state.listOfDailyTasks.listOfTasks.filter(task => !task.isTaskDone)
-      : this.state.listOfDailyTasks.listOfTasks;
+    const { sidebarTitle, AddTodayTaskButtonText } = this.props;
+    const activeDaily = this.getActiveTaskList();
+    const filteredTasks = this.getFilteredTasks();
+    const todayDate = new Date().toISOString().split("T")[0];
+    const isTodaysTasksCreated = this.state.listOfDailyTasks.some(
+      (dailyTasks) => dailyTasks.dateText === todayDate
+    );
+    const isListOfDailyTasksEmpty = this.state.listOfDailyTasks.length === 0;
 
     return (
       <div className="container">
@@ -184,63 +259,88 @@ class DailyTask extends React.Component {
           <h1 className="sidebar-heading">{sidebarTitle || "Add task"}</h1>
           <div className="list-of-daily-tasks-container">
             <ul className="list-of-daily-tasks">
-              {/* Only render one button for now */}
-              <DailyTasksButton
-                key={this.state.listOfDailyTasks.id}
-                id={this.state.listOfDailyTasks.id}
-                dateText={this.state.listOfDailyTasks.dateText}
-                onClickOfDate={() => {}}
-              />
-            </ul>
-          </div>
-          <button
-            className="new-task-btn"
-            onClick={onClickOfAddTodayTasks || (() => {})}
-          >
-            {AddTodayTaskButtonText || "Add Task"}
-          </button>
-        </div>
-        <main className="content">
-          {/* Pass the onClickOfAddButton prop to TaskInput */}
-          <TaskInput
-            onClickOfAddButton={this.onClickOfAddButton}
-            TaskItem={this.state.TaskItem}
-          />
-          <div className="created-tasks-and-remaining-tasks-container">
-            <h2 className="tasks-text">Tasks</h2>
-            <div className="titles-container">
-              <p className="title-text">Task Name</p>
-              <p className="title-text starttime-title-text">Start Time</p>
-              <p className="title-text endtime-title-text">End Time</p>
-            </div>
-            <ul className="list-of-created-tasks">
-              {tasksToDisplay.map((task) => (
-                <TaskItem
-                  key={task.id}
-                  id={task.id}
-                  taskName={task.taskName}
-                  startTime={task.startTime}
-                  endTime={task.endTime}
-                  isTaskDone={task.isTaskDone}
-                  isTodaysDate={task.isTodaysDate}
-                  onClickOfDelete={() => this.handleDelete(task.id)}
-                  onClickOfEdit={() => this.handleEdit(task)}
-                  onCheckBoxValueChanged={this.onTaskDone}
-                />
+              {this.state.listOfDailyTasks.map((daily) => (
+                <li
+                  key={daily.id}
+                  onClick={() => this.setActiveDaily(daily.id)}
+                  className={
+                    daily.id === this.state.activeDailyTaskId
+                      ? "active-daily"
+                      : ""
+                  }
+                >
+                  <DailyTasksButton
+                    key={daily.id}
+                    id={daily.id}
+                    dateText={daily.dateText}
+                    onClickOfDate={() => this.setActiveDaily(daily.id)}
+                    onCllickOfDelete={() =>
+                      this.OnClickOfDeleteDayTask(daily.id)
+                    }
+                    tasks={daily.listOfTasks.length}
+                  />
+                </li>
               ))}
             </ul>
-            <div className="tasksleftbutton-and-checklistbutton">
-              <button
-                className="tasks-left-button"
-                onClick={this.toggleTasksFilter}
-              >
-                {this.state.showOnlyIncompleteTasks
-                  ? "Show All Tasks"
-                  : "Tasks Left"}
-              </button>
-            </div>
           </div>
-        </main>
+          {isTodaysTasksCreated ? (
+            <></>
+          ) : (
+            <button
+              className="new-task-btn"
+              onClick={this.OnClickOfAddTodayTasks}
+            >
+              {AddTodayTaskButtonText || "Add Task List"}
+            </button>
+          )}
+        </div>
+        {isListOfDailyTasksEmpty ? (
+          <h1 className="add-today-tasks-description">Add Today Tasks</h1>
+        ) : (
+          <main className="content">
+            {/* Pass the onClickOfAddButton prop to TaskInput */}
+            <TaskInput
+              onClickOfAddButton={this.onClickOfAddButton}
+              TaskItem={this.state.TaskItem}
+            />
+            <div className="created-tasks-and-remaining-tasks-container">
+              <h2 className="tasks-text">
+                Tasks for {activeDaily ? activeDaily.dateText : "Today"}
+              </h2>
+              <div className="titles-container">
+                <p className="title-text">Task Name</p>
+                <p className="title-text starttime-title-text">Start Time</p>
+                <p className="title-text endtime-title-text">End Time</p>
+              </div>
+              <ul className="list-of-created-tasks">
+                {filteredTasks.map((task) => (
+                  <TaskItem
+                    key={task.id}
+                    id={task.id}
+                    taskName={task.taskName}
+                    startTime={task.startTime}
+                    endTime={task.endTime}
+                    isTaskDone={task.isTaskDone}
+                    isTodaysDate={task.isTodaysDate}
+                    onClickOfDelete={() => this.handleDelete(task.id)}
+                    onClickOfEdit={() => this.handleEdit(task)}
+                    onCheckBoxValueChanged={this.onTaskDone}
+                  />
+                ))}
+              </ul>
+              <div className="tasksleftbutton-and-checklistbutton">
+                <button
+                  className="tasks-left-button"
+                  onClick={this.toggleTasksFilter}
+                >
+                  {this.state.showOnlyIncompleteTasks
+                    ? "Show All Tasks"
+                    : "Tasks Left"}
+                </button>
+              </div>
+            </div>
+          </main>
+        )}
       </div>
     );
   }
