@@ -30,7 +30,11 @@ const JourneyAchievementDisplay = ({ day, advanceToNextDay, canCompleteToday }) 
                     <span className="step-name">Day {index + 1}</span>
                     {isPrevious || isCurrent ? 
                       <span className="step-status">✓ Completed</span> : 
-                      <span className="step-status-pending">{Math.max(index - currentDay, 0) + 1} {index - currentDay === 0 ? 'day' : 'days'} away</span>
+                      <span className="step-status-pending">
+                        {Math.max(index - (currentDay - 1), 0)} 
+                        {index - (currentDay - 1) === 0 ? 'day' : 'days'} away
+                      </span>
+
                     }
                   </div>
                   
@@ -67,8 +71,7 @@ const JourneyAchievementDisplay = ({ day, advanceToNextDay, canCompleteToday }) 
           </button>
         ) : (
           <button 
-            disabled
-            className="achievement-continue-btn disabled"
+            className="achievement-continue-btn"
           >
             Next Challenge Unlocks at Midnight
           </button>
