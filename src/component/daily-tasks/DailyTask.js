@@ -3,7 +3,7 @@ import "./styles/DailyTask.css";
 import TaskItem from "./TaskItem";
 import { v4 as uuidv4 } from "uuid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faTrash} from "@fortawesome/free-solid-svg-icons";
 
 const DailyTasksButton = (props) => {
   const { dateText, onClickOfDate, onCllickOfDelete } = props;
@@ -13,7 +13,7 @@ const DailyTasksButton = (props) => {
         <p className="date-text-style">{dateText}</p>
       </button>
       <button className="delete-icon" onClick={onCllickOfDelete}>
-        <FontAwesomeIcon icon={faTrash} />
+        <FontAwesomeIcon icon={faTrash} style={{width:"20px", height:"20px", marginRight:"20px"}} />
       </button>
     </div>
   );
@@ -285,7 +285,7 @@ class DailyTask extends React.Component {
         {isListOfDailyTasksEmpty ? (
           <h1 className="add-today-tasks-description">Add Today Tasks</h1>
         ) : (
-          <main className="content">
+          <div className="tasks-content-container">
             {/* Pass the onClickOfAddButton prop to TaskInput */}
             <TaskInput
               onClickOfAddButton={this.onClickOfAddButton}
@@ -327,7 +327,7 @@ class DailyTask extends React.Component {
                 </button>
               </div>
             </div>
-          </main>
+          </div>
         )}
       </div>
     );
