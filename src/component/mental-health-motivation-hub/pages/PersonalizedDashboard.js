@@ -13,33 +13,6 @@ const prompts = [
   "Reflect on a happy memory that brings you joy."
 ];
 
-// Enhanced JourneyAchievementDisplay component
-// const JourneyAchievementDisplay = ({ day, advanceToNextDay, canCompleteToday }) => {
-//   return (
-//     <div className="achievement-display">
-//       <div className="achievement-icon">🎉</div>
-//       <h3>Day {day + 1} Completed!</h3>
-//       <p>You've taken another step in your gratitude journey.</p>
-//       <p className="achievement-quote">
-//         "Gratitude is not only the greatest of virtues, but the parent of all others."
-//       </p>
-//       {day < 6 ? (
-//         <button 
-//           onClick={advanceToNextDay} 
-//           className="continue-btn"
-//           disabled={!canCompleteToday}
-//         >
-//           {canCompleteToday ? 'Continue to Day ' + (day + 2) : 'Next day unlocks tomorrow'}
-//         </button>
-//       ) : (
-//         <div className="final-day-message">
-//           <p>You've reached the final day of your journey!</p>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
 const PersonalizedDashboard = () => {
   const [day, setDay] = useState(parseInt(localStorage.getItem('currentDay')) || 0);
   const [entries, setEntries] = useState(() => {
@@ -77,11 +50,14 @@ const PersonalizedDashboard = () => {
     }
   });
   
-  // Check if user can proceed to next day
-  const [canCompleteToday, setCanCompleteToday] = useState(() => {
+  // Check if user can advance to next day
+  const [canAdvanceToNextDay, setCanAdvanceToNextDay] = useState(() => {
     const today = new Date().toLocaleDateString();
     return today !== lastCompletionDate;
   });
+  
+  // Check if user can complete today's challenge (needs 3 entries and hasn't completed today)
+  const [canCompleteToday, setCanCompleteToday] = useState(false);
   
   // Track if day completion message should be shown
   const [showDayCompletionMessage, setShowDayCompletionMessage] = useState(false);
@@ -91,11 +67,17 @@ const PersonalizedDashboard = () => {
   
   useEffect(() => {
     localStorage.setItem('dailyEntries', JSON.stringify(dailyEntries));
-  }, [dailyEntries]);
+    
+    // Update canCompleteToday whenever dailyEntries changes
+    // User can complete today if they have at least 3 entries and haven't completed this day yet
+    const hasEnoughEntries = Array.isArray(dailyEntries[day]) && dailyEntries[day].length >= 3;
+    const hasNotCompletedDay = !completedDays.includes(day);
+    setCanCompleteToday(hasEnoughEntries && hasNotCompletedDay);
+  }, [dailyEntries, day, completedDays]);
 
   useEffect(() => {
     const today = new Date().toLocaleDateString();
-    setCanCompleteToday(today !== lastCompletionDate);
+    setCanAdvanceToNextDay(today !== lastCompletionDate);
   }, [lastCompletionDate]);
 
   useEffect(() => {
@@ -200,6 +182,9 @@ const PersonalizedDashboard = () => {
   };
 
   const handleSubmitDay = () => {
+    // Only allow completion if user has 3+ entries and hasn't completed this day
+    if (!canCompleteToday) return;
+    
     const newCompletedDays = [...completedDays];
     if (!newCompletedDays.includes(day)) {
       newCompletedDays.push(day);
@@ -221,20 +206,21 @@ const PersonalizedDashboard = () => {
     
     setIsDayCompleted(true);
     setShowDayCompletionMessage(true);
+    
+    // Set today's date as last completion date
+    const today = new Date().toLocaleDateString();
+    setLastCompletionDate(today);
+    localStorage.setItem('lastCompletionDate', today);
   };
   
   const advanceToNextDay = () => {
+    if (!canAdvanceToNextDay) return;
+    
     if (day < 6) {
       const nextDay = day + 1;
       setDay(nextDay);
       setShowDayCompletionMessage(false);
       setIsDayCompleted(false);
-
-      setTimeout(() => {
-        if (showDayCompletionMessage) {
-          setShowDayCompletionMessage(false);
-        }
-      }, 50);
     } else {
       setShowCompletionMessage(true);
     }
@@ -258,7 +244,7 @@ const PersonalizedDashboard = () => {
     if (remaining <= 0) {
       if (isDayCompleted) {
         return "Day completed! You can keep adding more entries if you'd like.";
-      } else if (!canCompleteToday) {
+      } else if (!canAdvanceToNextDay) {
         return "You've completed today's entries. Come back tomorrow to continue your journey!";
       }
       return "All 3 entries complete! You can now complete this day's challenge.";
@@ -274,7 +260,7 @@ const PersonalizedDashboard = () => {
       <JourneyAchievementDisplay 
         day={day} 
         advanceToNextDay={advanceToNextDay} 
-        canCompleteToday={canCompleteToday} 
+        canCompleteToday={canAdvanceToNextDay} 
       />
     );
   };
@@ -363,6 +349,12 @@ const PersonalizedDashboard = () => {
         >
           Insights
         </button>
+        <button 
+          className={`tab-btn ${activeTab === 'journey' ? 'active' : ''}`}
+          onClick={() => setActiveTab('journey')}
+        >
+          Journey
+        </button>
       </div>
 
       <div className="main-content">
@@ -386,10 +378,10 @@ const PersonalizedDashboard = () => {
                 
                 {showDayCompletionMessage ? (
                   getDayCompletionMessage()
-                ) : !canCompleteToday && isDayCompleted ? (
+                ) : !canAdvanceToNextDay && isDayCompleted ? (
                   <div className="next-day-message">
                     <p>You've completed today's challenge! 🎉</p>
-                    <p>Come back tomorrow to continue with Day {day + 1}'s challenge.</p>
+                    <p>Come back tomorrow to continue with Day {day + 2}'s challenge.</p>
                     <p className="next-unlock-time">Next challenge unlocks at midnight.</p>
                   </div>
                 ) : (
@@ -409,8 +401,8 @@ const PersonalizedDashboard = () => {
                       {!isDayCompleted && (
                         <button 
                           onClick={handleSubmitDay} 
-                          className={`submit-btn ${Array.isArray(dailyEntries[day]) && dailyEntries[day].length >= 3 ? 'active' : 'disabled'}`}
-                          disabled={!Array.isArray(dailyEntries[day]) || dailyEntries[day].length < 3}
+                          className={`submit-btn ${canCompleteToday ? 'active' : 'disabled'}`}
+                          disabled={!canCompleteToday}
                         >
                           Complete Day {day + 1}
                         </button>
@@ -572,6 +564,14 @@ const PersonalizedDashboard = () => {
               </ul>
             </div>
           </div>
+        )}
+
+        {activeTab === 'journey' && (
+          <JourneyAchievementDisplay 
+            day={day} 
+            advanceToNextDay={advanceToNextDay} 
+            canCompleteToday={canAdvanceToNextDay} 
+          />
         )}
       </div>
     </div>
