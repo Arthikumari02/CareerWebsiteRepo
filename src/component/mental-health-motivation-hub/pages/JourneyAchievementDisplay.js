@@ -1,14 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import './styles/JourneyAchievementDisplay.css'
+import './styles/JourneyAchievementDisplay.css';
 
-const JourneyAchievementDisplay = ({ day, advanceToNextDay, canCompleteToday }) => {
-  // Keep a local copy of the day prop to ensure it's current
-  const [currentDay, setCurrentDay] = useState(day);
-  
-  // Update local day state when prop changes
+const JourneyAchievementDisplay = ({ advanceToNextDay, canCompleteToday }) => {
+  const [currentDay, setCurrentDay] = useState(0);
+  const [email, setEmail] = useState(() => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    return storedUser?.email || null;
+  });
+
+  // Retrieve user-specific progress
   useEffect(() => {
-    setCurrentDay(day);
-  }, [day]);
+    if (email) {
+      const userProgress = JSON.parse(localStorage.getItem('userProgress') || '{}');
+      setCurrentDay(userProgress[email] || 0);
+    }
+  }, [email]);
+
+  // Update progress for the specific user
+  const handleAdvance = () => {
+    if (canCompleteToday && currentDay < 6) {
+      const nextDay = currentDay + 1;
+      setCurrentDay(nextDay);
+      
+      const userProgress = JSON.parse(localStorage.getItem('userProgress') || '{}');
+      userProgress[email] = nextDay;
+      localStorage.setItem('userProgress', JSON.stringify(userProgress));
+
+      advanceToNextDay();
+    }
+  };
 
   return (
     <div className="journey-achievement-container">
@@ -18,7 +38,7 @@ const JourneyAchievementDisplay = ({ day, advanceToNextDay, canCompleteToday }) 
             const isPrevious = index < currentDay;
             const isCurrent = index === currentDay;
             const isNext = index > currentDay;
-            
+
             return (
               <div 
                 key={index} 
@@ -34,7 +54,6 @@ const JourneyAchievementDisplay = ({ day, advanceToNextDay, canCompleteToday }) 
                         {Math.max(index - (currentDay - 1), 0)} 
                         {index - (currentDay - 1) === 0 ? 'day' : 'days'} away
                       </span>
-
                     }
                   </div>
                   
@@ -61,18 +80,15 @@ const JourneyAchievementDisplay = ({ day, advanceToNextDay, canCompleteToday }) 
       <div className="achievement-actions">
         <p className="achievement-congrats">Congratulations on completing Day {currentDay + 1}!</p>
         
-        {/* IMPORTANT: The Continue button should be disabled and show different text when canCompleteToday is false */}
         {canCompleteToday ? (
           <button 
-            onClick={advanceToNextDay} 
+            onClick={handleAdvance} 
             className="achievement-continue-btn"
           >
             {currentDay < 6 ? `Continue to Day ${currentDay + 2}` : "Complete My Journey!"}
           </button>
         ) : (
-          <button 
-            className="achievement-continue-btn"
-          >
+          <button className="achievement-continue-btn" disabled>
             Next Challenge Unlocks at Midnight
           </button>
         )}
@@ -96,7 +112,6 @@ const getIconForDay = (dayIndex) => {
     '🔆', // Clarity - Day 6
     '🏆', // Achievement - Day 7
   ];
-  
   return icons[dayIndex];
 };
 
