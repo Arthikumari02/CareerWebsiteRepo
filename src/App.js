@@ -14,7 +14,7 @@ import LifeCraftHomeNavbar from "./component/LifeCraftHomeNavbar";
 import MentalHealthNavbar from "./component/mental-health-motivation-hub/pages/Navbar";
 import MentalHealthMotivationalHub from "./component/mental-health-motivation-hub/pages/Home";
 import DailyTask from "./component/daily-tasks/DailyTask";
-import Lifegoals from "./component/lifeGoals/Lifegoals"
+import Lifegoals from "./component/lifegoals/Lifegoals";
 import Quotes from "./component/mental-health-motivation-hub/pages/Quotes";
 import Journal from "./component/mental-health-motivation-hub/pages/Journal";
 import PersonalizedDashboard from "./component/mental-health-motivation-hub/pages/PersonalizedDashboard";

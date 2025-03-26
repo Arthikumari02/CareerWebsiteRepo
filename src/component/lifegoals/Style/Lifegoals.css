@@ -1,82 +1,117 @@
-/* General styling */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f8f9fa;
-  margin: 0;
+.carousel-container {
+  max-width: 100%;
   padding: 20px;
 }
 
-/* Carousel container */
-.carousel-container {
-  max-width: 1000px;
-  margin: auto;
-  overflow: hidden;
-  position: relative;
-}
-
-/* Wrapper for the slides */
-.carousel-wrapper {
+.carousel-header {
   display: flex;
-  transition: transform 0.4s ease-in-out;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-/* Individual cards */
-.carousel-card {
-  min-width: 280px;
-  background: white;
-  padding: 15px;
-  margin: 0 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-}
-
-/* Match title */
-.match-title {
-  font-weight: bold;
-  font-size: 16px;
-  margin-bottom: 5px;
-}
-
-/* Match details */
-.match-details {
-  font-size: 12px;
-  color: gray;
-}
-
-/* Score */
-.match-score {
-  font-size: 14px;
-  font-weight: bold;
-}
-
-/* Winning team */
-.match-result {
-  color: green;
-  font-weight: bold;
-}
-
-/* Navigation buttons */
-.carousel-btn {
+.carousel-navigation {
+  display: flex;
+  gap: 10px;
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: rgba(0, 0, 0, 0.6);
-  color: white;
+  top: 270px;
+  width: 100%;
+  border: solid 1px black;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.carousel-btn {
+  background-color: #f0f0f0;
   border: none;
-  padding: 10px 15px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  font-size: 18px;
-  border-radius: 5px;
-}
-
-.carousel-btn.left {
-  left: 5px;
-}
-
-.carousel-btn.right {
-  right: 5px;
+  transition: background-color 0.3s ease;
 }
 
 .carousel-btn:hover {
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: #e0e0e0;
+}
+
+.carousel-wrapper {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+}
+
+.carousel-inner {
+  display: flex;
+  gap: 16px;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+.carousel-inner::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+.carousel-card {
+  flex: 0 0 calc(33.333% - 16px); /* 3 cards per row with gap */
+  max-width: calc(33.333% - 16px);
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  scroll-snap-align: start;
+  transition: transform 0.3s ease;
+}
+
+.carousel-card:hover {
+  transform: scale(1.02);
+}
+
+.match-time {
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.match-title {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+.match-subtitle {
+  color: #888;
+  margin-bottom: 15px;
+}
+
+.match-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.match-team,
+.match-score,
+.match-result {
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .carousel-card {
+    flex: 0 0 calc(50% - 16px); /* 2 cards per row */
+    max-width: calc(50% - 16px);
+  }
+}
+
+@media (max-width: 768px) {
+  .carousel-card {
+    flex: 0 0 100%; /* 1 card per row */
+    max-width: 100%;
+  }
 }
