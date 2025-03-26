@@ -101,6 +101,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  align-self: center;
 }
 
 .new-task-btn:hover {
@@ -219,22 +220,6 @@
   font-weight: 600;
 }
 
-.titles-container {
-  display: grid;
-  grid-template-columns: 550px 5fr 5fr 1fr auto auto;
-  gap: 12px;
-  padding: 0 46px;
-  margin-bottom: 8px;
-}
-
-.title-text {
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #718096;
-  letter-spacing: 0.5px;
-}
-
 .created-tasks-and-remaining-tasks-container {
   background-color: white;
   border-radius: 12px;
@@ -242,14 +227,37 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
-.starttime-title-text {
-  margin-left: 145px;
+.titles-container {
+  display: grid;
+  grid-template-columns: 40px 2fr 1fr 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
 }
 
-.endtime-title-text {
-  margin-left: 100px;
+.title-text {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: left; /* Ensure text is left-aligned */
+  border: solid 1px black;
 }
 
+.title-text:nth-child(1) {
+  grid-column: 2; /* Align task name title with task name column */
+}
+
+.title-text:nth-child(2) {
+  grid-column: 3; /* Align start time title with start time column */
+}
+
+.title-text:nth-child(3) {
+  grid-column: 4; /* Align end time title with end time column */
+}
 .list-of-created-tasks {
   margin-bottom: 1.5rem;
 }
@@ -368,25 +376,25 @@
   .container {
     flex-direction: column;
   }
-  
+
   .sidebar {
     width: 100%;
     max-height: 250px;
   }
-  
+
   .task-adding-container {
     flex-direction: column;
   }
-  
+
   .titles-container {
     display: none;
   }
-  
+
   .task-item-container {
     grid-template-columns: auto 1fr auto auto;
     gap: 0.5rem;
   }
-  
+
   .timer-style {
     font-size: 0.8rem;
   }

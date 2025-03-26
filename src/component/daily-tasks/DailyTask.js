@@ -3,7 +3,7 @@ import "./styles/DailyTask.css";
 import TaskItem from "./TaskItem";
 import { v4 as uuidv4 } from "uuid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash} from "@fortawesome/free-solid-svg-icons";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const DailyTasksButton = (props) => {
   const { dateText, onClickOfDate, onCllickOfDelete } = props;
@@ -13,7 +13,10 @@ const DailyTasksButton = (props) => {
         <p className="date-text-style">{dateText}</p>
       </button>
       <button className="delete-icon" onClick={onCllickOfDelete}>
-        <FontAwesomeIcon icon={faTrash} style={{width:"20px", height:"20px", marginRight:"20px"}} />
+        <FontAwesomeIcon
+          icon={faTrash}
+          style={{ width: "20px", height: "20px", marginRight: "20px" }}
+        />
       </button>
     </div>
   );
@@ -29,6 +32,16 @@ class DailyTask extends React.Component {
       const savedTasksString = localStorage.getItem("listOfDailyTasks");
       if (savedTasksString) {
         savedDailyTasks = JSON.parse(savedTasksString);
+
+        // Update isTodaysDate for existing tasks
+        const todayDate = new Date().toISOString().split("T")[0];
+        savedDailyTasks = savedDailyTasks.map((daily) => ({
+          ...daily,
+          listOfTasks: daily.listOfTasks.map((task) => ({
+            ...task,
+            isTodaysDate: daily.dateText === todayDate,
+          })),
+        }));
       }
     } catch (error) {
       console.error("Error loading tasks from localStorage:", error);
@@ -40,7 +53,7 @@ class DailyTask extends React.Component {
     this.state = {
       listOfDailyTasks: initialDailyTasks,
       activeDailyTaskId:
-        initialDailyTasks.length < 0 ? initialDailyTasks[0].id : "", // Track which daily task is currently active
+        initialDailyTasks.length > 0 ? initialDailyTasks[0].id : "", // Track which daily task is currently active
       TaskItem: {
         taskName: "",
         startTime: "",
@@ -49,12 +62,47 @@ class DailyTask extends React.Component {
       },
       showOnlyIncompleteTasks: false, // Flag to track filter state
     };
+
+    // Set up a daily interval to update isTodaysDate
+    this.setupDateUpdateInterval();
   }
 
   componentDidMount() {
     // Save initial tasks to localStorage
     this.updateLocalStorage();
   }
+
+  componentWillUnmount() {
+    // Clear the interval when the component unmounts
+    if (this.dateUpdateInterval) {
+      clearInterval(this.dateUpdateInterval);
+    }
+  }
+
+  setupDateUpdateInterval = () => {
+    // Check and update date every hour
+    this.dateUpdateInterval = setInterval(() => {
+      this.updateTasksDates();
+    }, 60 * 60 * 1000); // 1 hour
+  };
+
+  updateTasksDates = () => {
+    const todayDate = new Date().toISOString().split("T")[0];
+
+    this.setState((prevState) => {
+      const updatedDailyTasks = prevState.listOfDailyTasks.map((daily) => ({
+        ...daily,
+        listOfTasks: daily.listOfTasks.map((task) => ({
+          ...task,
+          isTodaysDate: daily.dateText === todayDate,
+        })),
+      }));
+
+      return {
+        listOfDailyTasks: updatedDailyTasks,
+      };
+    }, this.updateLocalStorage);
+  };
 
   updateLocalStorage = () => {
     localStorage.setItem(
@@ -66,7 +114,6 @@ class DailyTask extends React.Component {
       localStorage.getItem("listOfDailyTasks")
     );
   };
-
   // Get the currently active task list
   getActiveTaskList = () => {
     const activeDaily =
@@ -122,6 +169,8 @@ class DailyTask extends React.Component {
   };
 
   onClickOfAddButton = (taskData) => {
+    const todayDate = new Date().toISOString().split("T")[0];
+
     if (taskData.id) {
       // Editing an existing task
       this.setState((prevState) => {
@@ -138,6 +187,7 @@ class DailyTask extends React.Component {
                       startTime: taskData.startTime,
                       endTime: taskData.endTime,
                       isTaskDone: taskData.isTaskDone,
+                      isTodaysDate: daily.dateText === todayDate,
                     }
                   : task
               ),
@@ -209,9 +259,10 @@ class DailyTask extends React.Component {
   };
 
   OnClickOfAddTodayTasks = () => {
+    const todayDate = new Date().toISOString().split("T")[0];
     const newDailyTask = {
       id: uuidv4(),
-      dateText: new Date().toISOString().split("T")[0],
+      dateText: todayDate,
       listOfTasks: [],
     };
 
@@ -252,6 +303,8 @@ class DailyTask extends React.Component {
       (dailyTasks) => dailyTasks.dateText === todayDate
     );
     const isListOfDailyTasksEmpty = this.state.listOfDailyTasks.length === 0;
+    const isTodayTaskActive =
+      activeDaily.dateText === new Date().toISOString().split("T")[0];
 
     return (
       <div className="container">
@@ -287,18 +340,23 @@ class DailyTask extends React.Component {
         ) : (
           <div className="tasks-content-container">
             {/* Pass the onClickOfAddButton prop to TaskInput */}
-            <TaskInput
-              onClickOfAddButton={this.onClickOfAddButton}
-              TaskItem={this.state.TaskItem}
-            />
+            {isTodayTaskActive ? (
+              <TaskInput
+                onClickOfAddButton={this.onClickOfAddButton}
+                TaskItem={this.state.TaskItem}
+              />
+            ) : (
+              <></>
+            )}
+
             <div className="created-tasks-and-remaining-tasks-container">
               <h2 className="tasks-text">
                 Tasks for {activeDaily ? activeDaily.dateText : "Today"}
               </h2>
               <div className="titles-container">
                 <p className="title-text">Task Name</p>
-                <p className="title-text starttime-title-text">Start Time</p>
-                <p className="title-text endtime-title-text">End Time</p>
+                <p className="title-text">Start Time</p>
+                <p className="title-text">End Time</p>
               </div>
               <ul className="list-of-created-tasks">
                 {filteredTasks.map((task) => (
