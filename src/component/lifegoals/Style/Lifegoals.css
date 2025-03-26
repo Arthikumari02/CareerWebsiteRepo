@@ -1,0 +1,82 @@
+/* General styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 20px;
+}
+
+/* Carousel container */
+.carousel-container {
+  max-width: 1000px;
+  margin: auto;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Wrapper for the slides */
+.carousel-wrapper {
+  display: flex;
+  transition: transform 0.4s ease-in-out;
+}
+
+/* Individual cards */
+.carousel-card {
+  min-width: 280px;
+  background: white;
+  padding: 15px;
+  margin: 0 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+/* Match title */
+.match-title {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+/* Match details */
+.match-details {
+  font-size: 12px;
+  color: gray;
+}
+
+/* Score */
+.match-score {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Winning team */
+.match-result {
+  color: green;
+  font-weight: bold;
+}
+
+/* Navigation buttons */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 5px;
+}
+
+.carousel-btn.left {
+  left: 5px;
+}
+
+.carousel-btn.right {
+  right: 5px;
+}
+
+.carousel-btn:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
