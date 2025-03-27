@@ -303,8 +303,10 @@ class DailyTask extends React.Component {
       (dailyTasks) => dailyTasks.dateText === todayDate
     );
     const isListOfDailyTasksEmpty = this.state.listOfDailyTasks.length === 0;
-    const isTodayTaskActive =
-      activeDaily.dateText === new Date().toISOString().split("T")[0];
+    
+    const isTodayTaskActive = activeDaily 
+    ? activeDaily.dateText === todayDate 
+    : false;
 
     return (
       <div className="container">
