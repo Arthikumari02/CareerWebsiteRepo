@@ -10,27 +10,45 @@ const SignIn = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSignIn = (e) => {
+  
+  const handleSignIn = async (e) => {
     e.preventDefault();
-
-    const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-    const user = existingUsers.find((user) => user.email === email);
-
-    if (!user) {
-      setError('User not found. Please sign up first.');
-      return;
+    setError('');
+  
+    try {
+      const result = await login(email, password);
+  
+      if (result.success) {
+        const userId = result.user?.uid; // Get UID directly from result
+  
+        if (!userId) {
+          throw new Error('User ID (UID) is missing');
+        }
+  
+        const response = await fetch('http://localhost:5000/store-user-data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, uid: userId }),
+        });
+  
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to store user data');
+        }
+  
+        const data = await response.json();
+        console.log('User data sent to email:', data);
+        alert('Sign-in successful! Data sent to email.');
+        navigate('/career-website-repo');
+      } else {
+        setError(result.message);
+      }
+    } catch (error) {
+      console.error('Error storing user data:', error);
+      setError(error.message || 'An error occurred while storing data');
     }
-
-    // if (user.password !== password) {
-    //   setError('Incorrect password. Please try again.');
-    //   return;
-    // }
-
-    login();
-    localStorage.setItem('user', JSON.stringify(user));
-    alert('Sign-in successful!');
-    navigate('/career-website-repo');
   };
+  
 
   return (
     <div style={{height:"100vh", display:"flex", flexDirection:"column", 

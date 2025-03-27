@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import validator from 'validator';
+import { useAuth } from './AuthContext';
 import './styles/SignUp.css';
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const { signUp } = useAuth();
   const [error, setError] = useState('');
   const [user, setUser] = useState({ email: '', password: '' });
 
@@ -12,7 +14,7 @@ const SignUp = () => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -28,19 +30,14 @@ const SignUp = () => {
       return;
     }
 
-    const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-    const userExists = existingUsers.find((u) => u.email === email);
+    const result = await signUp(email, password);
 
-    if (userExists) {
-      setError('User already exists. Please sign in or reset your password.');
-      return;
+    if (result.success) {
+      alert('Sign-up successful! Please Sign In.');
+      navigate('/signin');
+    } else {
+      setError(result.message);
     }
-
-    existingUsers.push({ email, password });
-    localStorage.setItem('users', JSON.stringify(existingUsers));
-
-    alert('Sign-up successful! Please Sign In.');
-    navigate('/signin');
   };
 
   return (

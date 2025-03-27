@@ -3,7 +3,7 @@ import './styles/JourneyAchievementDisplay.css';
 
 const JourneyAchievementDisplay = ({ advanceToNextDay, canCompleteToday }) => {
   const [currentDay, setCurrentDay] = useState(0);
-  const [email, setEmail] = useState(() => {
+  const [email] = useState(() => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
     return storedUser?.email || null;
   });

@@ -6,10 +6,10 @@ const LogoutButton = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     alert('You have been logged out.');
-    navigate('/signup');
+    navigate('/signin');
   };
 
   return <button onClick={handleLogout}>Sign Out</button>;
