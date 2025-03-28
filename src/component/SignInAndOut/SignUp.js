@@ -33,8 +33,28 @@ const SignUp = () => {
     const result = await signUp(email, password);
 
     if (result.success) {
-      alert('Sign-up successful! Please Sign In.');
-      navigate('/signin');
+      try {
+        // Send user data with isNewSignUp set to true
+        const response = await fetch('http://localhost:5000/store-user-data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            email, 
+            uid: result.user.uid, 
+            isNewSignUp: true 
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to store user data');
+        }
+
+        alert('Sign-up successful! Welcome email sent.');
+        navigate('/signin');
+      } catch (error) {
+        console.error('Error storing user data:', error);
+        setError('Sign-up partially successful, but failed to send welcome email');
+      }
     } else {
       setError(result.message);
     }

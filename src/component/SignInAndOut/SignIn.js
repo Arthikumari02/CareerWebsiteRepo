@@ -5,12 +5,11 @@ import './styles/SignUp.css'
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login} = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  
   const handleSignIn = async (e) => {
     e.preventDefault();
     setError('');
@@ -19,36 +18,22 @@ const SignIn = () => {
       const result = await login(email, password);
   
       if (result.success) {
-        const userId = result.user?.uid; // Get UID directly from result
+        const userId = result.user?.uid;
   
         if (!userId) {
           throw new Error('User ID (UID) is missing');
         }
   
-        const response = await fetch('http://localhost:5000/store-user-data', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, uid: userId }),
-        });
-  
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || 'Failed to store user data');
-        }
-  
-        const data = await response.json();
-        console.log('User data sent to email:', data);
-        alert('Sign-in successful! Data sent to email.');
+        // Navigate to dashboard, letting AuthContext handle progress loading
         navigate('/career-website-repo');
       } else {
         setError(result.message);
       }
     } catch (error) {
-      console.error('Error storing user data:', error);
-      setError(error.message || 'An error occurred while storing data');
+      console.error('Sign-in error:', error);
+      setError(error.message || 'An error occurred during sign-in');
     }
   };
-  
 
   return (
     <div style={{height:"100vh", display:"flex", flexDirection:"column", 

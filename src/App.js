@@ -19,6 +19,8 @@ import Journal from "./component/mental-health-motivation-hub/pages/Journal";
 import PersonalizedDashboard from "./component/mental-health-motivation-hub/pages/PersonalizedDashboard";
 import SignUp from "./component/SignInAndOut/SignUp";
 import SignIn from "./component/SignInAndOut/SignIn";
+import ForgotPassword from "./component/SignInAndOut/ForgotPassword";
+import ResetPassword from "./component/SignInAndOut/PasswordReset";
 
 function App() {
   return (
@@ -70,6 +72,8 @@ function MainApp() {
             path="/personalized-dashboard"
             element={<PersonalizedDashboard />}
           />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Routes>
       </div>
     </div>

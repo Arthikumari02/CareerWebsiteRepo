@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../SignInAndOut/AuthContext';
 import './styles/PersonalizedDashboard.css';
 import JourneyAchievementDisplay from './JourneyAchievementDisplay';
 
@@ -14,6 +15,7 @@ const prompts = [
 ];
 
 const PersonalizedDashboard = () => {
+  const { userProgress } = useAuth();
   const [day, setDay] = useState(parseInt(localStorage.getItem('currentDay')) || 0);
   const [entries, setEntries] = useState(() => {
     const stored = JSON.parse(localStorage.getItem('entries'));
@@ -68,8 +70,6 @@ const PersonalizedDashboard = () => {
   useEffect(() => {
     localStorage.setItem('dailyEntries', JSON.stringify(dailyEntries));
     
-    // Update canCompleteToday whenever dailyEntries changes
-    // User can complete today if they have at least 3 entries and haven't completed this day yet
     const hasEnoughEntries = Array.isArray(dailyEntries[day]) && dailyEntries[day].length >= 3;
     const hasNotCompletedDay = !completedDays.includes(day);
     setCanCompleteToday(hasEnoughEntries && hasNotCompletedDay);
@@ -105,6 +105,33 @@ const PersonalizedDashboard = () => {
   useEffect(() => {
     setIsDayCompleted(completedDays.includes(day));
   }, [day, completedDays]);
+
+  useEffect(() => {
+    if (userProgress) {
+      // Restore state from userProgress
+      if (userProgress.currentDay !== undefined) {
+        setDay(userProgress.currentDay);
+      }
+      if (userProgress.entries) {
+        setEntries(userProgress.entries);
+      }
+      if (userProgress.completedChallenges) {
+        setCompletedChallenges(userProgress.completedChallenges);
+      }
+      if (userProgress.cycleCount !== undefined) {
+        setCycleCount(userProgress.cycleCount);
+      }
+      if (userProgress.lastCompletionDate) {
+        setLastCompletionDate(userProgress.lastCompletionDate);
+      }
+      if (userProgress.completedDays) {
+        setCompletedDays(userProgress.completedDays);
+      }
+      if (userProgress.dailyEntries) {
+        setDailyEntries(userProgress.dailyEntries);
+      }
+    }
+  }, [userProgress]);
 
   const handleThemeChange = (newTheme) => {
     setTheme(newTheme);
